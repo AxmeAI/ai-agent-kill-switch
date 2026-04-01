@@ -159,7 +159,7 @@ No CLI needed. See something wrong, click kill. Fix the issue, click resume.
 ```
 +----------+   heartbeat()    +----------------+
 |          | ---------------> |                |
-|  Agent   |   (every 10s)   |   AXME Cloud   |
+|  Agent   |   (every 10s)    |   AXME Cloud   |
 | Instance |                  |   (gateway)    |
 |          | <-- kill signal  |                |
 |          |   via heartbeat  |                |
