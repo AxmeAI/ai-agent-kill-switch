@@ -36,18 +36,17 @@ $ gcloud functions kill email-campaign --region us-central1
 
 What actually needs to happen:
 
-```
-$ axme mesh kill agent://myorg/production/email-campaign
-[09:00:12] Kill signal sent to all 3 instances
-[09:00:12] Instance us-central1-a: PAUSED (batch 22, email 2,147)
-[09:00:12] Instance us-central1-b: PAUSED (batch 19, email 1,893)
-[09:00:12] Instance us-east1-b:    PAUSED (batch 21, email 2,034)
-[09:00:12] Total: 6,074 emails sent. 43,926 remaining. All instances halted.
+```python
+# One API call - all instances blocked at the gateway
+client.mesh.kill(address_id)
+# 09:00:12 - Kill signal sent. All intents blocked. All 3 instances halted.
 
 # Fix the template, then:
-$ axme mesh resume agent://myorg/production/email-campaign
-[09:15:00] All 3 instances resumed from checkpoint
+client.mesh.resume(address_id)
+# 09:15:00 - Intents flowing again. Agent resumes.
 ```
+
+Or click Kill/Resume in the dashboard at [mesh.axme.ai](https://mesh.axme.ai).
 
 ---
 
