@@ -140,6 +140,8 @@ axme mesh events agent://myorg/production/email-campaign
 
 ## Dashboard
 
+![Agent Mesh Dashboard](mesh-dashboard.png)
+
 The AXME Mesh Dashboard at [mesh.axme.ai](https://mesh.axme.ai) shows all your agents in real time:
 
 - **Agent list** with live health status (active, killed, stale, crashed)
@@ -157,7 +159,7 @@ No CLI needed. See something wrong, click kill. Fix the issue, click resume.
 ```
 +----------+   heartbeat()    +----------------+
 |          | ---------------> |                |
-|  Agent   |   (every 10s)   |   AXME Cloud   |
+|  Agent   |   (every 10s)    |   AXME Cloud   |
 | Instance |                  |   (gateway)    |
 |          | <-- kill signal  |                |
 |          |   via heartbeat  |                |
