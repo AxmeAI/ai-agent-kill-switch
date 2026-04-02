@@ -85,55 +85,35 @@ import os
 
 client = AxmeClient(AxmeClientConfig(api_key=os.environ["AXME_API_KEY"]))
 
-# Register agent with the mesh
-client.mesh.heartbeat(
-    agent_uri="agent://myorg/production/email-campaign",
-    status="active",
-)
+# Start background heartbeat (every 30s)
+client.mesh.start_heartbeat()
 
-# Your agent checks for kill signal before each action
+# Agent does its work
 for batch in email_batches:
-    client.mesh.heartbeat(
-        agent_uri="agent://myorg/production/email-campaign",
-        status="active",
-        metadata={"batch": batch.id, "sent": batch.sent_count},
-    )
-    # If agent is killed, heartbeat raises AgentKilledException
-    # Agent stops cleanly with full state preserved
-
     send_emails(batch)
+    client.mesh.report_metric(success=True, cost_usd=batch.cost)
 ```
 
 ### Operator Side - Kill or Resume
 
 ```python
 # Kill - instant, all instances
-client.mesh.kill("agent://myorg/production/email-campaign")
+agents = client.mesh.list_agents()
+target = [a for a in agents["agents"] if "email-campaign" in a["address"]][0]
+client.mesh.kill(target["address_id"])
 
 # Check status
-agents = client.mesh.list_agents()
-for agent in agents:
-    print(f"{agent['agent_uri']}: {agent['status']}")
-    # agent://myorg/production/email-campaign: killed
+print(f"{target['display_name']}: killed")
 
-# Resume
-client.mesh.resume("agent://myorg/production/email-campaign")
+# Resume when fixed
+client.mesh.resume(target["address_id"])
 ```
 
 ### CLI
 
 ```bash
-# Kill from terminal
-axme mesh kill agent://myorg/production/email-campaign
-
-# See all agents and their status
-axme mesh list
-
-# Resume
-axme mesh resume agent://myorg/production/email-campaign
-
-# View kill/resume audit log
-axme mesh events agent://myorg/production/email-campaign
+# Open dashboard - kill/resume from the UI
+axme mesh dashboard
 ```
 
 ---
@@ -175,12 +155,11 @@ No CLI needed. See something wrong, click kill. Fix the issue, click resume.
 
 **Gateway-level enforcement.** The kill signal is not a polite request. When an agent is killed:
 
-1. All heartbeat responses include `killed: true`
-2. All `send_intent()` calls from that agent are rejected (403)
-3. All tool calls routed through AXME are blocked
-4. The agent SDK raises `AgentKilledException` - the agent cannot ignore it
+1. Heartbeat responses return `health_status: "killed"`
+2. All new intents to this agent are rejected (403)
+3. All outbound intents from this agent are blocked
 
-The agent doesn't decide whether to stop. The platform enforces it. Even if the agent code has a bug and doesn't check the heartbeat, its outbound actions are blocked at the gateway.
+The agent doesn't decide whether to stop. The gateway enforces it. Even if the agent code ignores the heartbeat response, its intents are blocked.
 
 ---
 
