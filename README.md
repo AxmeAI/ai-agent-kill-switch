@@ -5,7 +5,7 @@ Your AI agent is sending 10,000 emails and you can't stop it. AXME adds an insta
 AI agents act autonomously. When they go wrong, they go wrong fast - sending thousands of emails, making unauthorized API calls, burning through cloud budgets. You need a kill switch that works in under 1 second, across all running instances, even when you can't access the machine the agent is running on.
 
 > **Alpha** - Built with [AXME](https://github.com/AxmeAI/axme) (AXP Intent Protocol).
-> [cloud.axme.ai](https://cloud.axme.ai) - [hello@axme.ai](mailto:hello@axme.ai)
+> [cloud.axme.ai](https://cloud.axme.ai) - [contact@axme.ai](mailto:contact@axme.ai)
 
 ---
 
